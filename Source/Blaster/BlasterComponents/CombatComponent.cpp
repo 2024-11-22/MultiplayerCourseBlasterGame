@@ -182,7 +182,11 @@ void UCombatComponent::FireProjectileWeapon()
 		// 如果武器使用散射，则计算散射后的目标点
 		HitTarget = EquippedWeapon->bUseScatter ? EquippedWeapon->TraceEndWithScatter(HitTarget) : HitTarget;
 		// 非服务器端执行本地开火效果
-		if (!Character->HasAuthority()) LocalFire(HitTarget);
+		if (!Character->HasAuthority())
+		{
+			// 本地预测
+			LocalFire(HitTarget);
+		}
 		// 向服务器发送开火请求
 		ServerFire(HitTarget, EquippedWeapon->FireDelay);
 	}
@@ -293,8 +297,13 @@ bool UCombatComponent::ServerFire_Validate(const FVector_NetQuantize& TraceHitTa
 void UCombatComponent::MulticastFire_Implementation(const FVector_NetQuantize& TraceHitTarget)
 {
 	// 避免在非服务器端的本地客户端重复执行
-	if (Character && Character->IsLocallyControlled() && !Character->HasAuthority()) return;
-	// 执行本地开火效果
+	// 因为已经进行了本地预测，所以不需要再进行一次
+	if (Character && Character->IsLocallyControlled() && !Character->HasAuthority())
+	{
+		return;
+	}
+	
+	// ROLE_SimulatedProxy执行本地开火效果
 	LocalFire(TraceHitTarget);
 }
 
