@@ -134,9 +134,17 @@ void AWeapon::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* 
 	if (BlasterCharacter)
 	{
 		// 旗帜武器特殊处理：不允许同一队伍的玩家拾取
-		if (WeaponType == EWeaponType::EWT_Flag && BlasterCharacter->GetTeam() == Team) return;
+		if (WeaponType == EWeaponType::EWT_Flag && BlasterCharacter->GetTeam() == Team)
+		{
+			return;
+		}
+		
 		// 不允许已经持有旗帜的玩家拾取武器
-		if (BlasterCharacter->IsHoldingTheFlag()) return;
+		if (BlasterCharacter->IsHoldingTheFlag())
+		{
+			return;
+		}
+		
 		// 设置角色的重叠武器引用，使玩家可以看到拾取提示
 		BlasterCharacter->SetOverlappingWeapon(this);
 	}
