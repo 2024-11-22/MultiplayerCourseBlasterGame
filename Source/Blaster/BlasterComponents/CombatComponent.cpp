@@ -707,6 +707,7 @@ void UCombatComponent::ServerReload_Implementation()
 	CombatState = ECombatState::ECS_Reloading;
 
 	// 非本地控制的角色执行本地装填逻辑
+	// 监听服务器本身也是一个客户端，这里是在监听服务器的客户端执行
 	if (!Character->IsLocallyControlled())
 	{
 		HandleReload();
