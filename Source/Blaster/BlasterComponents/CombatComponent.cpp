@@ -202,8 +202,13 @@ void UCombatComponent::FireHitScanWeapon()
 	{
 		// 如果武器使用散射，则计算散射后的目标点
 		HitTarget = EquippedWeapon->bUseScatter ? EquippedWeapon->TraceEndWithScatter(HitTarget) : HitTarget;
+		
 		// 非服务器端执行本地开火效果
-		if (!Character->HasAuthority()) LocalFire(HitTarget);
+		if (!Character->HasAuthority())
+		{
+			LocalFire(HitTarget);
+		}
+		
 		// 向服务器发送开火请求
 		ServerFire(HitTarget, EquippedWeapon->FireDelay);
 	}
@@ -234,7 +239,11 @@ void UCombatComponent::FireShotgun()
  */
 void UCombatComponent::StartFireTimer()
 {
-	if (EquippedWeapon == nullptr || Character == nullptr) return;
+	if (EquippedWeapon == nullptr || Character == nullptr)
+	{
+		return;
+	}
+	
 	// 设置计时器，在武器的射击延迟后调用FireTimerFinished函数
 	Character->GetWorldTimerManager().SetTimer(
 		FireTimer,
@@ -250,14 +259,22 @@ void UCombatComponent::StartFireTimer()
  */
 void UCombatComponent::FireTimerFinished()
 {
-	if (EquippedWeapon == nullptr) return;
-	bCanFire = true; // 重新启用开火功能
+	if (EquippedWeapon == nullptr)
+	{
+		return;
+	}
+
+	// 重新启用开火功能
+	bCanFire = true;
+	
 	// 如果开火按钮仍被按住且武器是自动的，则继续射击
 	if (bFireButtonPressed && EquippedWeapon->bAutomatic)
 	{
 		Fire();
 	}
-	ReloadEmptyWeapon(); // 检查并装填空武器
+
+	// 检查并装填空武器
+	ReloadEmptyWeapon();
 }
 
 /**
@@ -356,12 +373,17 @@ void UCombatComponent::MulticastShotgunFire_Implementation(const TArray<FVector_
  */
 void UCombatComponent::LocalFire(const FVector_NetQuantize& TraceHitTarget)
 {
-	if (EquippedWeapon == nullptr) return;
+	if (EquippedWeapon == nullptr)
+	{
+		return;
+	}
 	// 只有当角色处于未占用状态时才能开火
 	if (Character && CombatState == ECombatState::ECS_Unoccupied)
 	{
-		Character->PlayFireMontage(bAiming); // 播放开火动画蒙太奇
-		EquippedWeapon->Fire(TraceHitTarget); // 执行武器开火逻辑
+		// 播放开火动画蒙太奇
+		Character->PlayFireMontage(bAiming);
+		// 执行武器开火逻辑
+		EquippedWeapon->Fire(TraceHitTarget);
 	}
 }
 
@@ -1247,10 +1269,23 @@ void UCombatComponent::ServerSetAiming_Implementation(bool bIsAiming)
  */
 bool UCombatComponent::CanFire()
 {
-	if (EquippedWeapon == nullptr) return false; // 无装备武器
+	// 无装备武器
+	if (EquippedWeapon == nullptr)
+	{
+		return false;
+	}
+	
 	// 霰弹枪特殊情况：在装填状态也可以开火
-	if (!EquippedWeapon->IsEmpty() && bCanFire && CombatState == ECombatState::ECS_Reloading && EquippedWeapon->GetWeaponType() == EWeaponType::EWT_Shotgun) return true;
-	if (bLocallyReloading) return false; // 本地装填中
+	if (!EquippedWeapon->IsEmpty() && bCanFire && CombatState == ECombatState::ECS_Reloading && EquippedWeapon->GetWeaponType() == EWeaponType::EWT_Shotgun)
+	{
+		return true;
+	}
+
+	// 本地装填中
+	if (bLocallyReloading)
+	{
+		return false;
+	}
 	// 常规开火条件：有弹药、可以开火、战斗状态为未占用
 	return !EquippedWeapon->IsEmpty() && bCanFire && CombatState == ECombatState::ECS_Unoccupied;
 }

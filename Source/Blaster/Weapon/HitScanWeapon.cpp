@@ -22,7 +22,11 @@ void AHitScanWeapon::Fire(const FVector& HitTarget)
 
 	// 获取武器所有者（角色）
 	APawn* OwnerPawn = Cast<APawn>(GetOwner());
-	if (OwnerPawn == nullptr) return;
+	if (OwnerPawn == nullptr)
+	{
+		return;
+	}
+	
 	// 获取武器所有者的控制器
 	AController* InstigatorController = OwnerPawn->GetController();
 
