@@ -883,12 +883,26 @@ void ABlasterCharacter::LookUp(float Value)
  */
 void ABlasterCharacter::EquipButtonPressed()
 {
-	if (bDisableGameplay) return; // 如果禁用游戏玩法则直接返回
+	// 如果禁用游戏玩法则直接返回
+	if (bDisableGameplay)
+	{
+		return;
+	}
+	
 	if (Combat)
 	{
-		if (Combat->bHoldingTheFlag) return; // 如果持有旗帜则不能装备武器
+		// 如果持有旗帜则不能装备武器
+		if (Combat->bHoldingTheFlag)
+		{
+			return;
+		}
+		
 		// 如果战斗状态空闲，则请求服务器装备武器
-		if (Combat->CombatState == ECombatState::ECS_Unoccupied) ServerEquipButtonPressed();
+		if (Combat->CombatState == ECombatState::ECS_Unoccupied) 
+		{
+			ServerEquipButtonPressed();
+		}
+		
 		// 检查是否应该在客户端先进行武器切换动画
 		bool bSwap = Combat->ShouldSwapWeapons() &&
 			!HasAuthority() &&
@@ -917,6 +931,7 @@ void ABlasterCharacter::ServerEquipButtonPressed_Implementation()
 		{
 			Combat->EquipWeapon(OverlappingWeapon);
 		}
+		
 		// 否则，如果可以切换武器，则切换主副武器
 		else if (Combat->ShouldSwapWeapons())
 		{

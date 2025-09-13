@@ -391,8 +391,16 @@ void UCombatComponent::ShotgunLocalFire(const TArray<FVector_NetQuantize>& Trace
  */
 void UCombatComponent::EquipWeapon(AWeapon* WeaponToEquip)
 {
-	if (Character == nullptr || WeaponToEquip == nullptr) return;
-	if (CombatState != ECombatState::ECS_Unoccupied) return; // 只有未占用状态才能装备武器
+	if (Character == nullptr || WeaponToEquip == nullptr)
+	{
+		return;
+	}
+
+	// 只有未占用状态才能装备武器
+	if (CombatState != ECombatState::ECS_Unoccupied)
+	{
+		return; 
+	}
 
 	// 特殊处理旗帜武器
 	if (WeaponToEquip->GetWeaponType() == EWeaponType::EWT_Flag)
@@ -444,16 +452,28 @@ void UCombatComponent::SwapWeapons()
  */
 void UCombatComponent::EquipPrimaryWeapon(AWeapon* WeaponToEquip)
 {
-	if (WeaponToEquip == nullptr) return;
-	DropEquippedWeapon(); // 放下当前装备的武器
-	EquippedWeapon = WeaponToEquip; // 设置新武器为主武器
-	EquippedWeapon->SetWeaponState(EWeaponState::EWS_Equipped); // 设置武器状态
-	AttachActorToRightHand(EquippedWeapon); // 将武器附加到右手
-	EquippedWeapon->SetOwner(Character); // 设置武器所有者
-	EquippedWeapon->SetHUDAmmo(); // 更新HUD上的弹药显示
-	UpdateCarriedAmmo(); // 更新携带的弹药显示
-	PlayEquipWeaponSound(WeaponToEquip); // 播放装备武器音效
-	ReloadEmptyWeapon(); // 如果武器为空则自动装填
+	if (WeaponToEquip == nullptr)
+	{
+		return;
+	}
+	// 放下当前装备的武器
+	DropEquippedWeapon();
+	// 设置新武器为主武器
+	EquippedWeapon = WeaponToEquip;
+	// 设置武器状态
+	EquippedWeapon->SetWeaponState(EWeaponState::EWS_Equipped);
+	// 将武器附加到右手
+	AttachActorToRightHand(EquippedWeapon);
+	// 设置武器所有者
+	EquippedWeapon->SetOwner(Character);
+	// 更新HUD上的弹药显示
+	EquippedWeapon->SetHUDAmmo();
+	// 更新携带的弹药显示
+	UpdateCarriedAmmo();
+	// 播放装备武器音效
+	PlayEquipWeaponSound(WeaponToEquip);
+	// 如果武器为空则自动装填
+	ReloadEmptyWeapon(); 
 }
 
 /**
@@ -463,12 +483,21 @@ void UCombatComponent::EquipPrimaryWeapon(AWeapon* WeaponToEquip)
  */
 void UCombatComponent::EquipSecondaryWeapon(AWeapon* WeaponToEquip)
 {
-	if (WeaponToEquip == nullptr) return;
-	SecondaryWeapon = WeaponToEquip; // 设置武器为副武器
-	SecondaryWeapon->SetWeaponState(EWeaponState::EWS_EquippedSecondary); // 设置武器状态
-	AttachActorToBackpack(WeaponToEquip); // 将武器附加到背包
-	PlayEquipWeaponSound(WeaponToEquip); // 播放装备武器音效
-	SecondaryWeapon->SetOwner(Character); // 设置武器所有者
+	if (WeaponToEquip == nullptr)
+	{
+		return;
+	}
+
+	// 设置武器为副武器
+	SecondaryWeapon = WeaponToEquip;
+	// 设置武器状态
+	SecondaryWeapon->SetWeaponState(EWeaponState::EWS_EquippedSecondary);
+	// 将武器附加到背包
+	AttachActorToBackpack(WeaponToEquip);
+	// 播放装备武器音效
+	PlayEquipWeaponSound(WeaponToEquip);
+	// 设置武器所有者
+	SecondaryWeapon->SetOwner(Character); 
 }
 
 /**
@@ -502,7 +531,11 @@ void UCombatComponent::DropEquippedWeapon()
  */
 void UCombatComponent::AttachActorToRightHand(AActor* ActorToAttach)
 {
-	if (Character == nullptr || Character->GetMesh() == nullptr || ActorToAttach == nullptr) return;
+	if (Character == nullptr || Character->GetMesh() == nullptr || ActorToAttach == nullptr)
+	{
+		return;
+	}
+	
 	// 获取右手套接字
 	const USkeletalMeshSocket* HandSocket = Character->GetMesh()->GetSocketByName(FName("RightHandSocket"));
 	if (HandSocket)
@@ -556,7 +589,11 @@ void UCombatComponent::AttachActorToLeftHand(AActor* ActorToAttach)
  */
 void UCombatComponent::AttachActorToBackpack(AActor* ActorToAttach)
 {
-	if (Character == nullptr || Character->GetMesh() == nullptr || ActorToAttach == nullptr) return;
+	if (Character == nullptr || Character->GetMesh() == nullptr || ActorToAttach == nullptr)
+	{
+		return;
+	}
+	
 	// 获取背包套接字
 	const USkeletalMeshSocket* BackpackSocket = Character->GetMesh()->GetSocketByName(FName("BackpackSocket"));
 	if (BackpackSocket)
