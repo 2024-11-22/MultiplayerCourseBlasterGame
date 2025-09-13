@@ -1126,8 +1126,16 @@ void ABlasterCharacter::Jump()
 
 void ABlasterCharacter::FireButtonPressed()
 {
-	if (Combat && Combat->bHoldingTheFlag) return;
-	if (bDisableGameplay) return;
+	if (Combat && Combat->bHoldingTheFlag)
+	{
+		return;
+	}
+	
+	if (bDisableGameplay)
+	{
+		return;
+	}
+	
 	if (Combat)
 	{
 		Combat->FireButtonPressed(true);
@@ -1136,8 +1144,16 @@ void ABlasterCharacter::FireButtonPressed()
 
 void ABlasterCharacter::FireButtonReleased()
 {
-	if (Combat && Combat->bHoldingTheFlag) return;
-	if (bDisableGameplay) return;
+	if (Combat && Combat->bHoldingTheFlag)
+	{
+		return;
+	}
+	
+	if (bDisableGameplay)
+	{
+		return;
+	}
+	
 	if (Combat)
 	{
 		Combat->FireButtonPressed(false);
@@ -1366,8 +1382,10 @@ void ABlasterCharacter::SetOverlappingWeapon(AWeapon* Weapon)
 	{
 		OverlappingWeapon->ShowPickupWidget(false);
 	}
+	
 	// 更新重叠武器引用
 	OverlappingWeapon = Weapon;
+	
 	// 仅对本地控制角色处理拾取界面显示
 	if (IsLocallyControlled())
 	{
@@ -1391,6 +1409,7 @@ void ABlasterCharacter::OnRep_OverlappingWeapon(AWeapon* LastWeapon)
 	{
 		OverlappingWeapon->ShowPickupWidget(true);
 	}
+	
 	// 如果之前有重叠的武器，则隐藏其拾取界面
 	if (LastWeapon)
 	{
