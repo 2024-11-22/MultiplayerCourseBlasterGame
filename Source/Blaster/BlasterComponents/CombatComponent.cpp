@@ -684,8 +684,10 @@ void UCombatComponent::Reload()
 	// 检查是否满足装填条件：有弹药、处于未占用状态、武器存在、武器未满、不在本地装填中
 	if (CarriedAmmo > 0 && CombatState == ECombatState::ECS_Unoccupied && EquippedWeapon && !EquippedWeapon->IsFull() && !bLocallyReloading)
 	{
-		ServerReload(); // 向服务器发送装填请求
-		HandleReload(); // 处理本地装填逻辑
+		// 向服务器发送装填请求
+		ServerReload();
+		// 处理本地装填逻辑
+		HandleReload(); 
 		bLocallyReloading = true; // 设置本地装填标志
 	}
 }
@@ -696,10 +698,19 @@ void UCombatComponent::Reload()
  */
 void UCombatComponent::ServerReload_Implementation()
 {
-	if (Character == nullptr || EquippedWeapon == nullptr) return;
+	if (Character == nullptr || EquippedWeapon == nullptr)
+	{
+		return;
+	}
 
-	CombatState = ECombatState::ECS_Reloading; // 设置战斗状态为装填中
-	if (!Character->IsLocallyControlled()) HandleReload(); // 非本地控制的角色执行本地装填逻辑
+	// 设置战斗状态为装填中
+	CombatState = ECombatState::ECS_Reloading;
+
+	// 非本地控制的角色执行本地装填逻辑
+	if (!Character->IsLocallyControlled())
+	{
+		HandleReload();
+	}
 }
 
 /**
@@ -893,8 +904,13 @@ void UCombatComponent::OnRep_CombatState()
 	// 根据战斗状态执行相应操作
 	switch (CombatState)
 	{
-	case ECombatState::ECS_Reloading: // 装填状态
-		if (Character && !Character->IsLocallyControlled()) HandleReload(); // 非本地控制的角色执行装填
+		// 装填状态
+	case ECombatState::ECS_Reloading:
+		// 非本地控制的角色(ROLE_SimulatedProxy)执行装填
+		if (Character && !Character->IsLocallyControlled())
+		{
+			HandleReload();
+		}
 		break;
 	case ECombatState::ECS_Unoccupied: // 未占用状态
 		if (bFireButtonPressed) // 如果开火按钮被按住

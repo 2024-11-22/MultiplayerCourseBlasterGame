@@ -963,11 +963,22 @@ void ABlasterCharacter::CrouchButtonPressed()
  */
 void ABlasterCharacter::ReloadButtonPressed()
 {
-	if (Combat && Combat->bHoldingTheFlag) return; // 如果持有旗帜则不能换弹
-	if (bDisableGameplay) return; // 如果禁用游戏玩法则直接返回
+	// 如果持有旗帜则不能换弹
+	if (Combat && Combat->bHoldingTheFlag)
+	{
+		return;
+	}
+	
+	// 如果禁用游戏玩法则直接返回
+	if (bDisableGameplay)
+	{
+		return;
+	}
+
+	// 通知战斗组件进行武器换弹
 	if (Combat)
 	{
-		Combat->Reload(); // 通知战斗组件进行武器换弹
+		Combat->Reload();
 	}
 }
 
